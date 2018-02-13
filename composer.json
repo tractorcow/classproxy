@@ -1,0 +1,17 @@
+{
+    "name": "tractorcow/classproxy",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Damian Mooyman",
+            "email": "damian@silverstripe.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "TractorCow\\ClassProxy\\": "src/"
+        }
+    }
+}
