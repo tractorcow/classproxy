@@ -3,6 +3,7 @@
 namespace TractorCow\ClassProxy;
 
 use ReflectionClass;
+use TractorCow\ClassProxy\Generators\ExtendsClassGenerator;
 
 class ProxyFactory
 {
@@ -54,6 +55,8 @@ class ProxyFactory
 
     /**
      * Ensure a proxy code exists and is registered for this current proxy
+     *
+     * @return string
      */
     protected function ensureCode()
     {
@@ -64,8 +67,9 @@ class ProxyFactory
                 mkdir(dirname($proxyPath), 0755, true);
             }
             file_put_contents($proxyPath, $code);
-            safeRequire($proxyPath);
         }
+        // exists
+        safeRequire($proxyPath);
         return $this->getProxyClassName();
     }
 
@@ -75,17 +79,8 @@ class ProxyFactory
     protected function generateCode()
     {
         $name = $this->getProxyClassName();
-        $parent = $this->class->getName();
-
-        return <<<EOS
-<?php
-/**
- * Automatically scaffolded
- */
-class $name extends $parent
-{
-}
-EOS;
+        $generator = new ExtendsClassGenerator($this->class, $name);
+        return $generator->__toString();
     }
 
     /**
