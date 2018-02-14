@@ -11,7 +11,11 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "TractorCow\\ClassProxy\\": "src/"
+            "TractorCow\\ClassProxy\\": "src/",
+            "TractorCow\\ClassProxy\\Tests\\": "tests/"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7"
     }
 }
