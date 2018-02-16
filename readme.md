@@ -5,7 +5,7 @@
 Dynamically scaffold proxy classes that actually extend the class being proxied,
 allowing them to be used in type-strict applications.
 
-No it's not prophecy beacuse this is designed for partial proxies, not testing.
+No it's not prophecy because this is designed for partial proxies, not testing.
 
 ## Examples
 
