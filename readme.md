@@ -1,5 +1,7 @@
 # Partial proxy class builder
 
+[![Build Status](https://travis-ci.org/tractorcow/classproxy.svg?branch=master)](https://travis-ci.org/tractorcow/classproxy)
+
 Dynamically scaffold proxy classes that actually extend the class being proxied,
 allowing them to be used in type-strict applications.
 
