@@ -1,12 +1,27 @@
-# The only _real_ class proxy builder!
+# Partial proxy class builder
 
 Dynamically scaffold proxy classes that actually extend the class being proxied,
 allowing them to be used in type-strict applications.
 
+No it's not prophecy beacuse this is designed for partial proxies, not testing.
+
 ## Examples
 
 ```php
-$proxy = ProxyFactory::create(DataBase::class);
+// Create a proxy creator
+$proxy = ProxyFactory::create(DataBase::class)
+    ->addMethod('connect', function ($args, $next) use ($logger) {
+        $logger->log("Connecting to server " . $args[0]['server'];
+        return $next(...$args);
+    });
+    
+// Generate instance of our proxy
 $instance = $proxy->instance();
 assert($instance instanceof Database); // Yep!
+
+// Connects to underlying database, logging the call
+$instance->connect([
+    'server' => 'localhost',
+    'user' => 'root'
+]);
 ```
