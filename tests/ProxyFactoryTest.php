@@ -2,7 +2,9 @@
 
 namespace TractorCow\ClassProxy\Tests;
 
+use InvalidArgumentException;
 use PHPUnit_Framework_TestCase;
+use TractorCow\ClassProxy\Proxied\Proxied;
 use TractorCow\ClassProxy\ProxyFactory;
 
 class ProxyFactoryTest extends PHPUnit_Framework_TestCase
@@ -49,5 +51,48 @@ class ProxyFactoryTest extends PHPUnit_Framework_TestCase
         $instance = $proxy->instance();
         $this->assertInstanceOf(ProxyFactoryTest\TestClassC::class, $instance);
         $this->assertEquals('Firstly, I want to talk to you Robert, Hello Mr. Robert', $instance->greet("Robert"));
+    }
+
+    /**
+     * Test methods can be proxified post-construct
+     */
+    public function testPostConstructProxy()
+    {
+        // Adding a method with no body should whitelist it for later
+        $proxy = ProxyFactory::create(ProxyFactoryTest\TestClassC::class)
+            ->addMethod('greet');
+
+        /** @var ProxyFactoryTest\TestClassC|Proxied $instance */
+        $instance = $proxy->instance();
+
+        // Add methods to instance directly
+        $instance->proxy()
+            ->addMethod('greet', function ($args, $next) {
+                return 'Firstly, ' . $next(...$args);
+            })
+            ->addMethod('greet', function ($args, $next) {
+                return "I want to talk to you {$args[0]}, " . $next("Mr. {$args[0]}");
+            });
+
+        // Test
+        $this->assertInstanceOf(ProxyFactoryTest\TestClassC::class, $instance);
+        $this->assertEquals('Firstly, I want to talk to you Robert, Hello Mr. Robert', $instance->greet("Robert"));
+    }
+
+    public function testPostConstructUnexpectedError()
+    {
+        $proxy = ProxyFactory::create(ProxyFactoryTest\TestClassC::class);
+
+        /** @var ProxyFactoryTest\TestClassC|Proxied $instance */
+        $instance = $proxy->instance();
+
+        // It's too late to add it by this point in time
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("Method greet cannot be mocked on an instance");
+        $instance
+            ->proxy()
+            ->addMethod('greet', function ($args, $next) {
+                return 'Firstly, ' . $next(...$args);
+            });
     }
 }

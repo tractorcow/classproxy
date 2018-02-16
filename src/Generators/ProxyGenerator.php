@@ -2,6 +2,7 @@
 
 namespace TractorCow\ClassProxy\Generators;
 
+use Closure;
 use InvalidArgumentException;
 use Prophecy\Doubler\Doubler;
 use Prophecy\Doubler\Generator\ClassCreator;
@@ -59,35 +60,37 @@ class ProxyGenerator
         $this->regenerateName();
     }
 
-    public function __clone()
-    {
-        // Regenerate on all new instances
-        $this->regenerateName();
-    }
-
     /**
      * Adds method to an immutable clone of this generator
      *
      * @param string $name Method name
-     * @param callable|string $callback Callback that has args ($args, $next),
+     * @param callable|string|null $callback Callback that has args ($args, $next),
      * or string for literal code. Methods are called first-in-first-out
      * and can call `$next(...$args)` to delegate. The closure will be bound to the
      * current object, so you can use `$this` inside it.
+     * If set to null, simply whitelist this method for later proxification.
      * @return static Class generator with this method
      */
-    public function addMethod($name, $callback)
+    public function addMethod($name, $callback = null)
     {
         $clone = clone $this;
         if (is_string($callback)) {
             $clone->methods[$name] = $callback;
-        } elseif (is_callable($callback)) {
-            if (!isset($clone->methods[$name])) {
-                $clone->methods[$name] = [];
-            }
+            return $clone;
+        }
+
+        // Whitelist this method for proxification
+        if (!isset($clone->methods[$name])) {
+            $clone->methods[$name] = [];
+        }
+
+        // Immediately register callback if provided
+        if ($callback instanceof Closure) {
             $clone->methods[$name][] = $callback;
-        } else {
+        } elseif (!is_null($callback)) {
             throw new InvalidArgumentException("Invalid callback type");
         }
+        $clone->regenerateName();
         return $clone;
     }
 
@@ -104,6 +107,7 @@ class ProxyGenerator
         }
         $clone = clone $this;
         $clone->interfaces[$interface->getName()] = $interface;
+        $clone->regenerateName();
         return $clone;
     }
 
@@ -118,6 +122,7 @@ class ProxyGenerator
     {
         $clone = clone $this;
         $clone->properties[$name] = $flags;
+        $clone->regenerateName();
         return $clone;
     }
 
@@ -131,7 +136,7 @@ class ProxyGenerator
     {
         // Setup class proxy
         $proxyPatch = new ProxyClassPatch($this->interfaces, $this->properties, $this->methods);
-        $doubler = new Doubler(new ProxyMirror, new ClassCreator(), new ProxyNameGenerator($this->name));
+        $doubler = new ProxyDoubler($this->name);
         $doubler->registerClassPatch($proxyPatch);
 
         /** @var Proxied $instance */

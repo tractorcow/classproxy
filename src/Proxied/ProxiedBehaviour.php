@@ -81,7 +81,7 @@ class ProxiedBehaviour
         if (!isset($this->methods[$method])) {
             throw new InvalidArgumentException("Method {$method} cannot be mocked on an instance");
         }
-        $this->methods[$method] = $callback;
+        $this->methods[$method][] = $callback;
         return $this;
     }
 }
