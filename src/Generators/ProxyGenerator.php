@@ -127,10 +127,10 @@ class ProxyGenerator
     }
 
     /**
-     * Get code for this class
+     * Build an instance for this class
      *
      * @param array $args
-     * @return string
+     * @return Proxied The proxied object
      */
     public function instance($args = [])
     {
