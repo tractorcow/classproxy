@@ -1,6 +1,7 @@
 # Partial proxy class builder
 
 [![Build Status](https://travis-ci.org/tractorcow/classproxy.svg?branch=master)](https://travis-ci.org/tractorcow/classproxy)
+[![SilverStripe supported module](https://img.shields.io/badge/silverstripe-supported-0071C4.svg)](https://www.silverstripe.org/software/addons/silverstripe-commercially-supported-module-list/)
 
 Dynamically scaffold proxy classes that actually extend the class being proxied,
 allowing them to be used in type-strict applications.
