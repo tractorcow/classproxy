@@ -164,13 +164,13 @@ class ProxyGenerator
         // Seed by list of proxied properties
         $seed = json_encode([
             $this->parent->getName(),
-            array_keys($this->methods),
-            array_keys($this->interfaces),
-            array_keys($this->properties),
+            array_keys($this->methods ?? []),
+            array_keys($this->interfaces ?? []),
+            array_keys($this->properties ?? []),
         ]);
 
         // Build new name based on seed and base of parent class
-        $suffix = substr(sha1($seed), 0, 7);
+        $suffix = substr(sha1($seed ?? ''), 0, 7);
         return $this->name = $this->parent->getShortName() . '_' . $suffix;
     }
 }

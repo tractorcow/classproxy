@@ -24,7 +24,7 @@ class ProxyDoubler extends Doubler
     protected function createDoubleClass(ReflectionClass $class = null, array $interfaces)
     {
         // Skip if class already exists
-        if (class_exists($this->name, false)) {
+        if (class_exists($this->name ?? '', false)) {
             return $this->name;
         }
         return parent::createDoubleClass($class, $interfaces);
