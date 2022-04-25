@@ -48,7 +48,7 @@ class ProxiedBehaviour
             throw new InvalidArgumentException("Method {$method} is not proxied");
         }
         $next = $last;
-        foreach (array_reverse($this->methods[$method]) as $callable) {
+        foreach (array_reverse($this->methods[$method] ?? []) as $callable) {
             $callable = Closure::bind($callable, $this->owner);
             $next = function (...$args) use ($callable, $next) {
                 return $callable($args, $next);
