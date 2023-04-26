@@ -8,6 +8,12 @@ allowing them to be used in type-strict applications.
 
 No it's not prophecy because this is designed for partial proxies, not testing.
 
+## Installation
+
+```sh
+composer require tractorcow/classproxy
+```
+
 ## Examples
 
 ```php
